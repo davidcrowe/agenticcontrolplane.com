@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Agentic Control Plane — Trust & Governance for LLM Apps</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="The Agentic Control Plane is the emerging trust, identity, and governance layer between LLM runtimes, tools, and your backend. Powered by the open-source Gatewaystack project."
+  />
+
+  <!-- Basic social preview -->
+  <meta property="og:title" content="Agentic Control Plane" />
+  <meta
+    property="og:description"
+    content="Trust, identity, and governance between LLM runtimes, tools, and your backend — built on the open-source Gatewaystack project."
+  />
+  <meta property="og:type" content="website" />
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-elevated: #050816;
+      --fg: #f9fafb;
+      --muted: #9ca3af;
+      --accent-start: #4f46e5;
+      --accent-end: #8b5cf6;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --pill-bg: rgba(15, 23, 42, 0.7);
+      --pill-border: rgba(148, 163, 184, 0.4);
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.7);
+      --radius-lg: 20px;
+      --radius-pill: 999px;
+      --container-max: 860px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 60%);
+      color: var(--fg);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: #c4b5fd;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .header {
+      padding: 3.5rem 0 2rem;
+    }
+
+    .title {
+      font-size: clamp(2.4rem, 3vw, 3rem);
+      letter-spacing: -0.04em;
+      margin: 0 0 0.75rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+    }
+
+    .subdetails {
+      max-width: 46rem;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.7;
+      margin: 0 0 1.75rem;
+    }
+
+    .subdetails strong {
+      color: #e5e7eb;
+    }
+
+    .actions {
+      margin-bottom: 1.25rem;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.4rem;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+      color: white;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        opacity 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .cta svg {
+      fill: currentColor;
+    }
+
+    .cta:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+      text-decoration: none;
+      box-shadow: 0 24px 55px rgba(15, 23, 42, 0.8);
+    }
+
+    .cta:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+    }
+
+    .quicklinks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .quicklinks span {
+      opacity: 0.6;
+    }
+
+    .quicklinks a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .quicklinks a:hover {
+      color: #e5e7eb;
+      text-decoration: underline;
+    }
+
+    /* Main story section */
+    section.lede {
+      padding: 1rem 0 2rem;
+      font-size: 0.98rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    section.lede p {
+      margin: 0 0 0.8rem;
+    }
+
+    section.lede p:last-child {
+      margin-bottom: 0;
+    }
+
+    .inline-link {
+      color: #c4b5fd;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .inline-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Diagram */
+    .diagram-wrapper {
+      margin: 2.25rem auto 2.75rem;
+      padding: 0 1.5rem;
+    }
+
+    .diagram-vertical {
+      margin: 0 auto;
+      max-width: 680px;
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 1.75rem 1.5rem 1.5rem;
+    }
+
+    .vflow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .vnode {
+      position: relative;
+      padding: 0.85rem 1.2rem;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .vnode.highlight {
+      background: radial-gradient(circle at top, rgba(79, 70, 229, 0.2), #020617 70%);
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    .badge {
+      position: absolute;
+      top: -0.7rem;
+      left: 0.9rem;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+      color: white;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 2px #020617;
+    }
+
+    .vtitle {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .vsub {
+      margin-top: 0.15rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .varrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .varrow svg {
+      width: 18px;
+      height: 40px;
+      opacity: 0.8;
+    }
+
+    .diagram-caption {
+      margin-top: 1.1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .diagram-caption code {
+      font-size: 0.78rem;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.08rem 0.25rem;
+      border-radius: 4px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    /* Feature pills */
+    .features {
+      padding: 0.5rem 0 3rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .pill-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .pill-list li {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-pill);
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-border);
+      color: #e5e7eb;
+      white-space: nowrap;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 1rem 0 1.4rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .footer-inner a {
+      color: #c4b5fd;
+      text-decoration: none;
+    }
+
+    .footer-inner a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .diagram-vertical {
+        padding: 1.4rem 1.15rem 1.25rem;
+      }
+      .vnode {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+  </style>
+
+  <script>
+    // Minimal outbound tracking hook placeholder (no external analytics needed)
+    function trackOutbound(label) {
+      console.log("Outbound click:", label);
+    }
+  </script>
+</head>
+<body>
+  <main class="page">
+    <header class="header container">
+      <h1 class="title">Agentic Control Plane</h1>
+      <p class="subtitle">Trust, identity, and governance for LLM & agentic apps</p>
+      <p class="subdetails">
+        The Agentic Control Plane is the layer that turns raw LLM runtimes and tools into
+        <strong>user-scoped, policy-aware</strong> systems. Built on the
+        <strong>Gatewaystack</strong> project, it sits between <strong>ChatGPT Apps SDK / MCP</strong>
+        and your backend, handling authentication, per-tool scopes, and governance.
+      </p>
+
+      <div class="actions container">
+        <a
+          href="https://github.com/davidcrowe/gatewaystack"
+          class="cta"
+          target="_blank"
+          rel="noopener noreferrer"
+          onclick="trackOutbound('github_repo')"
+        >
+          View Gatewaystack on GitHub
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h5V3H3v7h2V5z"></path>
+          </svg>
+        </a>
+      </div>
+
+      <nav class="quicklinks">
+        <a
+          href="https://github.com/davidcrowe/gatewaystack#readme"
+          target="_blank"
+          rel="noopener"
+          onclick="trackOutbound('quickstart')"
+        >Overview</a>
+        <span>·</span>
+        <a
+          href="https://github.com/davidcrowe/gatewaystack/tree/main/packages"
+          target="_blank"
+          rel="noopener"
+          onclick="trackOutbound('packages')"
+        >Packages</a>
+        <span>·</span>
+        <a
+          href="https://github.com/davidcrowe/gatewaystack#architecture"
+          target="_blank"
+          rel="noopener"
+          onclick="trackOutbound('architecture')"
+        >Architecture</a>
+        <span>·</span>
+        <a
+          href="https://github.com/davidcrowe/gatewaystack#security--governance"
+          target="_blank"
+          rel="noopener"
+          onclick="trackOutbound('security')"
+        >Security & Governance</a>
+      </nav>
+    </header>
+
+    <section class="container lede">
+      <p>
+        While wiring my app <a class="inline-link" href="https://innerdreamapp.com/app" target="_blank" rel="noopener">Inner</a>
+        into <strong>ChatGPT</strong> through the <strong>OpenAI Apps SDK</strong>, I hit a familiar wall:
+        there was no clear place for <strong>user identity, scopes, and data-access policy</strong> to live.
+      </p>
+      <p>
+        I could get an LLM to call tools. I could talk to Firestore and other backends. But there was no
+        shared layer that said: <strong>Who is this user?</strong> <strong>What are they allowed to do?</strong>
+        <strong>Which tools may run against which data?</strong>
+      </p>
+      <p>
+        Gatewaystack started as a way to solve that problem for one app. The vision for the
+        <strong>Agentic Control Plane</strong> is to turn those building blocks into a reusable,
+        open-source layer for <strong>identity, trust, and governance</strong> across LLM and agentic systems.
+      </p>
+    </section>
+
+    <div class="diagram-wrapper">
+      <figure class="diagram-vertical" aria-labelledby="diagram-caption">
+        <section class="vflow">
+          <div class="vnode">
+            <div class="badge">1</div>
+            <div class="vtitle">User</div>
+          </div>
+
+          <div class="varrow">
+            <svg viewBox="0 0 20 36" aria-hidden="true">
+              <path d="M10,4 L10,24" stroke="#8b5cf6" stroke-width="2" fill="none" />
+              <polygon points="10,32 5,24 15,24" fill="#8b5cf6" />
+            </svg>
+            <span>consent · scopes</span>
+          </div>
+
+          <div class="vnode">
+            <div class="badge">2</div>
+            <div class="vtitle">LLM runtime</div>
+            <div class="vsub">ChatGPT Apps SDK · Anthropic MCP</div>
+          </div>
+
+          <div class="varrow">
+            <svg viewBox="0 0 20 36" aria-hidden="true">
+              <path d="M10,4 L10,24" stroke="#8b5cf6" stroke-width="2" fill="none" />
+              <polygon points="10,32 5,24 15,24" fill="#8b5cf6" />
+            </svg>
+            <span>OIDC · JWT (RS256)</span>
+          </div>
+
+          <div class="vnode highlight">
+            <div class="badge">3</div>
+            <div class="vtitle">Agentic Control Plane</div>
+            <div class="vsub">Gatewaystack · trust & policy gateway</div>
+          </div>
+
+          <div class="varrow">
+            <svg viewBox="0 0 20 36" aria-hidden="true">
+              <path d="M10,4 L10,24" stroke="#8b5cf6" stroke-width="2" fill="none" />
+              <polygon points="10,32 5,24 15,24" fill="#8b5cf6" />
+            </svg>
+            <span>API calls · verified audience</span>
+          </div>
+
+          <div class="vnode">
+            <div class="badge">4</div>
+            <div class="vtitle">Your backend & data</div>
+            <div class="vsub">Cloud Run · Firestore · APIs</div>
+          </div>
+        </section>
+
+        <figcaption id="diagram-caption" class="diagram-caption">
+          Four-party trust: <strong>User</strong> → <strong>LLM runtime</strong> → <strong>Agentic Control Plane
+          (Gatewaystack)</strong> → <strong>Your backend</strong>. The control plane handles identity,
+          OIDC / JWT validation (<code>aud</code>, <code>scope</code>), per-tool scopes, and user-scoped calls into
+          your infrastructure.
+        </figcaption>
+      </figure>
+    </div>
+
+    <section class="container features">
+      <h3 class="section-title">What the Agentic Control Plane covers</h3>
+      <ul class="pill-list">
+        <li>OIDC / OAuth2 integration</li>
+        <li>RS256 JWT validation</li>
+        <li>Per-tool scopes & consent</li>
+        <li>User-scoped data access</li>
+        <li>Apps SDK / MCP aware</li>
+        <li>LLM tool governance</li>
+        <li>Routing & policy hooks</li>
+        <li>Cloud Run / Firestore ready</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <span>© <span id="year"></span> Agentic Control Plane —</span>
+        <a
+          href="https://github.com/davidcrowe/gatewaystack"
+          target="_blank"
+          rel="noopener noreferrer"
+          onclick="trackOutbound('github_footer')"
+        >GitHub</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Set current year in footer
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
